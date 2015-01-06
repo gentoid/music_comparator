@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+$:.push File.expand_path('../../lib/music_comparator', __FILE__)
+require 'cli'
+
+MusicComparator::Cli.start
