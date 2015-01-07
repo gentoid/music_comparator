@@ -1,5 +1,5 @@
 module MusicComparator
-  class Conditions
+  class Condition
 
     attr_accessor :rating
     attr_reader :eq_labels, :not_eq_labels
@@ -21,6 +21,14 @@ module MusicComparator
 
     def all_labels
       @eq_labels + @not_eq_labels
+    end
+
+    def has_eq?(label)
+      @eq_labels.include? label
+    end
+
+    def rating_with_leading_zero
+      rating.to_s.rjust 2, '0'
     end
 
   end
