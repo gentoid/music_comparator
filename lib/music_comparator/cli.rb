@@ -15,7 +15,7 @@ module MusicComparator
         to_copy, to_delete = diff db.scan_for(condition), files.scan_for(condition)
 
         unless to_copy.empty? && to_delete.empty?
-          puts "[ -- #{ 'wordless/' if condition.has_eq? :wordless }#{ condition.rating_with_leading_zero } -- ]"
+          puts "[ -- #{ condition.path } -- ]"
 
           unless to_copy.empty?
             puts '  TO COPY:'

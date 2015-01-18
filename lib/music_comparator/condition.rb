@@ -31,5 +31,9 @@ module MusicComparator
       rating.to_s.rjust 2, '0'
     end
 
+    def path
+      "#{ 'wordless/' if has_eq? :wordless }#{ rating_with_leading_zero }"
+    end
+
   end
 end
