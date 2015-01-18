@@ -9,12 +9,6 @@ module MusicComparator
 
     desc 'scan', 'Scan directory and DB for differences'
     def scan
-      t
-    end
-
-    private
-
-    def t
       db    = MusicComparator::Database.new
       files = MusicComparator::Files.new
       conditions.each do |condition|
@@ -36,6 +30,8 @@ module MusicComparator
         end
       end
     end
+
+    private
 
     def conditions
       result = []
