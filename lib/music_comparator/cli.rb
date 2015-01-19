@@ -1,6 +1,7 @@
 require 'thor'
 
 require 'condition'
+require 'corrector'
 require 'database'
 require 'files'
 
@@ -10,9 +11,8 @@ module MusicComparator
     desc 'scan', 'Scan directory and DB for differences'
     def scan
       db    = MusicComparator::Database.new
-      files = MusicComparator::Files.new
       conditions.each do |condition|
-        to_copy, to_delete = diff db.scan_for(condition), files.scan_for(condition)
+        to_copy, to_delete = diff db.scan_for(condition), MusicComparator::Files.scan_for(condition)
 
         unless to_copy.empty? && to_delete.empty?
           puts "[ -- #{ condition.path } -- ]"
@@ -29,6 +29,12 @@ module MusicComparator
           puts ''
         end
       end
+    end
+
+    desc 'remove_original_mix PATH', "Remove 'Original Mix' from music tags"
+    method_option :jobs, aliases: '-j', default: -1, type: :numeric, banner: 'Number of threads'
+    def remove_original_mix(path)
+      MusicComparator::Corrector.remove_original_mix path, options
     end
 
     private

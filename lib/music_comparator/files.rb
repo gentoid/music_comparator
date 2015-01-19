@@ -1,15 +1,37 @@
 module MusicComparator
   class Files
 
-    def scan_for(condition)
-      path = "/home/viktor/disks/data1/music-rated/#{ 'wordless/' if condition.has_eq? :wordless }#{ condition.rating_with_leading_zero }"
+    class << self
 
-      result = []
-      Dir.glob("#{path}/*") do |file|
-        result << file if File.file?(file) && /\.(mp3|flac|m4a)$/i =~ file
+      def scan_for(condition)
+        path = "/home/viktor/disks/data1/music-rated/#{ condition.path }"
+
+        scan_path_for_music path
       end
 
-      result
+      def new_music(path)
+        scan_path_for_music path, ext: [:mp3]
+      end
+
+      def is_music_file(file, options = {})
+        options[:ext] ||= [:mp3, :flac, :m4a]
+        File.file?(file) && /\.(#{ options[:ext].join '|' })$/i =~ file
+      end
+
+      def scan_path_for_music(path, options = {})
+        result = []
+        options[:recursive] ||= true
+
+        Dir.glob("#{path}/*") do |file|
+          result << file if self.is_music_file(file, options)
+          if File.directory?(file) and options[:recursive]
+            result += scan_path_for_music file, options
+          end
+        end
+
+        result
+      end
+
     end
 
   end
