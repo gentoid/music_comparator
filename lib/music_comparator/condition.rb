@@ -1,7 +1,7 @@
 module MusicComparator
   class Condition
 
-    attr_accessor :rating
+    attr_accessor :rating, :to_copy, :to_delete, :all_files
     attr_reader :eq_labels, :not_eq_labels
 
     def initialize
@@ -33,6 +33,18 @@ module MusicComparator
 
     def path
       "#{ 'wordless/' if has_eq? :wordless }#{ rating_with_leading_zero }"
+    end
+
+    def has_changes?
+      has_to_copy? or has_to_delete?
+    end
+
+    def has_to_copy?
+      !to_copy.empty?
+    end
+
+    def has_to_delete?
+      !to_delete.empty?
     end
 
   end
