@@ -12,7 +12,8 @@ module MusicComparator
     desc 'scan', 'Scan directory and DB for differences'
     def scan
       compute_changes
-      puts generate_scan_output
+      output = generate_scan_output
+      puts output unless output.empty?
     end
 
     desc 'remove_original_mix PATH', "Remove 'Original Mix' from music tags"
