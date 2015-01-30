@@ -1,10 +1,13 @@
 require 'thor'
 
 require 'colorize'
+require 'config'
 require 'condition'
 require 'corrector'
 require 'database'
 require 'files'
+require 'models/mp3_info'
+require 'parallel'
 
 module MusicComparator
   class Cli < Thor
@@ -20,6 +23,32 @@ module MusicComparator
     method_option :jobs, aliases: '-j', default: -1, type: :numeric, banner: 'Number of threads'
     def remove_original_mix(path)
       MusicComparator::Corrector.remove_original_mix path, options
+    end
+
+    desc 'find_duplicates', 'Find duplicates'
+    method_option :path, aliases: '-p', default: nil, type: :string, banner: 'Path to scan for duplicates, if not given path will be taken from config file'
+    method_option :jobs, aliases: '-j', default: -1, type: :numeric, banner: 'Number of threads'
+    def find_duplicates
+      Mongoid.load!(File.join(File.dirname(__FILE__), '..', '..', 'mongoid.yml'), :development)
+
+      parallel_options = {progress: 'Saving file info into DB'}
+      parallel_options[:in_processes] = options[:jobs].floor if options[:jobs] >= 0
+
+      paths = options[:path] ? options[:path] : MusicComparator::Config.all_music_paths
+
+      # MusicComparator::Models::MP3Info.delete_all
+
+      Parallel.each(MusicComparator::Files.mp3_files(paths), parallel_options) do |filename|
+        MusicComparator::Models::MP3Info.new(filename: filename).save
+      end
+
+
+      #[15] pry(main)> MusicComparator::Models::MP3Info.collection.aggregate(
+      # [15] pry(main)*   {'$group' => { '_id' => { 'a' => '$a', 't' => '$t' }, 'uniqueIds' => { '$addToSet' => '$_id' }, 'count' => { '$sum' => 1 } }},
+      #     [15] pry(main)*   { '$match' => { 'count' => { '$gte' => 2 } }},
+      #     [15] pry(main)*   { '$sort' => { 'count' => -1 }},
+      #     [15] pry(main)* )
+
     end
 
     private

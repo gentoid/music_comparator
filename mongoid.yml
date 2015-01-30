@@ -1,0 +1,6 @@
+development:
+  sessions:
+    default:
+      database: music_tools
+      hosts:
+        - localhost:27017

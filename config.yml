@@ -1,0 +1,9 @@
+qslite:
+  database: 'music_tools'
+paths:
+  music_collection:
+    - /home/viktor/disks/data1/music
+  downloaded_music:
+    - /home/viktor/disks/data1/download/music
+    - /home/viktor/disks/data2/download/music
+  rated_music: /home/viktor/disks/data1/rated-music

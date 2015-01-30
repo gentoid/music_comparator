@@ -9,7 +9,7 @@ module MusicComparator
         scan_path_for_music path
       end
 
-      def new_music(path)
+      def mp3_files(path)
         scan_path_for_music path, ext: [:mp3]
       end
 
@@ -19,6 +19,10 @@ module MusicComparator
       end
 
       def scan_path_for_music(path, options = {})
+        if path.is_a?(Array)
+          return path.reduce([]) { |memo, _path| memo + scan_path_for_music(_path, options) }
+        end
+
         result = []
         options[:recursive] ||= true
 

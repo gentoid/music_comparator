@@ -13,7 +13,7 @@ module MusicComparator
 
         pattern_to_remove = /(.+[^ ]) +(\(original mix\)|- original mix) *$/i
 
-        Parallel.each(MusicComparator::Files.new_music(path), parallel_options) do |filename|
+        Parallel.each(MusicComparator::Files.mp3_files(path), parallel_options) do |filename|
           TagLib::MPEG::File.open(filename) do |mp3|
             pattern_to_remove.match(mp3.id3v2_tag.title) do |match|
               puts "#{filename.black.bold}\n  #{match[0].cyan.bold} > #{match[1].green.bold} #{match[2].red}"
