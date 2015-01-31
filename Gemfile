@@ -9,3 +9,5 @@ gem 'ruby-progressbar'
 gem 'sqlite3'
 gem 'taglib-ruby'
 gem 'thor'
+
+gem 'rspec', require: false
