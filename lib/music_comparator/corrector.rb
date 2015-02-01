@@ -113,27 +113,30 @@ module MusicComparator
         if (m = /^(.+[^\)])( +(?:- |\())(.+[^)])(\)?)$/.match(rest))
           feat = m[1]
           rest = m[3]
-          rest_to_changes = "#{feat.red}#{m[2].magenta}#{rest.cyan}#{m[4].magenta}"
+          rest_to_changes = "#{feat.red.bold}#{m[2].magenta.bold}#{rest.cyan}#{m[4].magenta.bold}"
         elsif (m = /^([^\(\)]+)(\) *\(?)([^)]*)(.*)$/.match(rest))
           feat = m[1]
           rest = m[3]
-          rest_to_changes = "#{feat.red}#{m[2].magenta}#{rest.cyan}#{m[4].magenta}"
+          rest_to_changes = "#{feat.red.bold}#{m[2].magenta.bold}#{rest.cyan}#{m[4].magenta.bold}"
         else
           feat = rest
           rest = ''
-          rest_to_changes = "#{feat.red}"
+          rest_to_changes = "#{feat.red.bold}"
         end
 
-        changes = "#{@artist.cyan} - #{title.cyan}#{before_feat.magenta}#{feat_shortcut.red} #{rest_to_changes} > "
+        changes = "#{@artist.cyan} - #{title.cyan}#{before_feat.magenta.bold}#{feat_shortcut.red.bold} #{rest_to_changes} > "
+        changed_title = "#{title.green}"
+        changed_artist = "#{@artist.green} #{"feat. #{feat}".green.bold}"
 
         if rest.length > 0
           title += " (#{rest})"
+          changed_title += " (#{rest})".green.bold
         end
 
         @title = title
         @artist += " feat. #{feat}"
 
-        changes += "#{@artist.green} - #{@title.green}"
+        changes += "#{changed_artist} - #{changed_title}"
         @changes << changes
       end
     end
