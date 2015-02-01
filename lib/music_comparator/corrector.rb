@@ -104,52 +104,27 @@ module MusicComparator
     end
 
     def correct_title_feat
-      if (match = /(.+[(\[ ])(f(?:ea)?t\.?) +(.+)/i.match(@title))
-        title = match[1].gsub(/ +$/, '')
-        rest = match[3]
+      if (match = /(.+[(\[ ])(f(?:ea)?t(?:\.|uring)?) +(.+)/i.match(@title)) # catch all variants of 'featuring'
+        title = match[1].gsub(/(( +?-)? +| +\()$/, '')
+        rest = match[3].strip
 
-        feat = ''
-
-        if title[-1] == '('
-          /(?:([^)].*)\)(.*))/.match(rest) do |rest_match|
-            title.gsub!(/ +\($/, '')
-            feat = rest_match[1]
-            rest = rest_match[2]
-          end
-        elsif title[-1] == '['
-          return
+        if (match = /^(.+[^\)]) +(?:- |\()(.+[^)])\)?$/.match(rest))
+          feat = match[1]
+          rest = match[2]
+        elsif (match = /^([^\(\)]+)\) *\(?([^)]*)/.match(rest))
+          feat = match[1]
+          rest = match[2]
         else
-          # return
-          /(.+)([\[(].+[\])])/.match(rest) do |rest_match|
-            feat = rest_match[1]
-            rest = rest_match[2]
-          end
+          feat = rest
+          rest = ''
+        end
 
-          if feat.length == 0
-            feat = rest
-            rest = ''
-          end
-
-          if feat[-1] == ')' or feat[-1] == ']'
-            if rest.length == 0
-              title += feat[-1]
-            else
-              rest += feat[-1]
-            end
-            feat = feat[0..-2]
-          end
-
+        if rest.length > 0
+          title += " (#{rest})"
         end
 
         @title = title
-
-        if rest.length > 0
-          @title += ' ' + rest
-        end
-
-        if feat.length > 0
-          @artist += ' feat. ' + feat
-        end
+        @artist += " feat. #{feat}"
 
         # puts "#{ mp3.id3v2_tag.title.cyan } => #{ title.green } #{ rest.cyan } #{'['.yellow.bold} feat. #{ feat.red.bold } #{']'.yellow.bold}"
       end

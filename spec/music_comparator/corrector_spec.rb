@@ -14,7 +14,7 @@ describe MusicComparator::Corrector do
 
       title_correct_to = title
       if options[:pattern].include?('remix')
-        title_correct_to + " (#{remix})"
+        title_correct_to += " (#{remix})"
       end
 
       subject.instance_variable_set :@artist, artist
@@ -22,7 +22,7 @@ describe MusicComparator::Corrector do
 
       subject.send :correct_title_feat
 
-      if options[:check] == 'artist'
+      if options[:check] == :artist
         expect(subject.instance_variable_get(:@artist)).to eq("#{artist} feat. #{feat_artist}")
       else
         expect(subject.instance_variable_get(:@title)).to eq(title_correct_to)
