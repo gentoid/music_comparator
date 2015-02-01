@@ -12,19 +12,34 @@ describe MusicComparator::Corrector do
 
       title_before_corrections = options[:pattern].gsub('feat', "#{options[:feat_shortcut]} #{feat_artist}").gsub('title', title).gsub('remix', remix)
 
+      title_correct_to = title
+      if options[:pattern].include?('remix')
+        title_correct_to + " (#{remix})"
+      end
+
       subject.instance_variable_set :@artist, artist
       subject.instance_variable_set :@title, title_before_corrections
 
       subject.send :correct_title_feat
 
-      expect(subject.instance_variable_get(:@artist)).to eq("#{artist} feat. #{feat_artist}")
-      expect(subject.instance_variable_get(:@title)).to eq(title)
+      if options[:check] == 'artist'
+        expect(subject.instance_variable_get(:@artist)).to eq("#{artist} feat. #{feat_artist}")
+      else
+        expect(subject.instance_variable_get(:@title)).to eq(title_correct_to)
+      end
     end
 
     %w(featuring Featuring feat feat. Feat Feat. ft ft.).each do |feat_shortcut|
       ['title (feat)', 'title feat', 'title - feat', 'title (feat) (remix)', 'title feat (remix)', 'title (feat - remix)'].each do |pattern|
-        it "moves feat with shortcut '#{feat_shortcut}' and pattern '#{pattern}' from artist to title" do
-          common_part pattern: pattern, feat_shortcut: feat_shortcut
+        context "with shortcut '#{feat_shortcut}' and pattern '#{pattern}'" do
+
+          it 'sets correct artist' do
+            common_part pattern: pattern, feat_shortcut: feat_shortcut, check: :artist
+          end
+
+          it 'sets correct title' do
+            common_part pattern: pattern, feat_shortcut: feat_shortcut, check: :title
+          end
         end
       end
     end
