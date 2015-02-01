@@ -4,15 +4,17 @@ describe MusicComparator::Corrector do
 
   describe '#correct_title_feat' do
 
-    def common_part(title_to_correct)
-      feat = 'feat. Featuring Artist'
-      title = 'Title'
+    def common_part(options)
+      remix  = 'Artist 2 Remix'
+      title  = 'Title'
       artist = 'Artist'
 
-      title_to_correct.gsub!('feat', feat).gsub!('title', title)
+      feat = "#{options[:feat_shortcut]} Featuring Artist"
+
+      title_before_corrections = options[:pattern].gsub('feat', feat).gsub('title', title).gsub('remix', remix)
 
       subject.instance_variable_set :@artist, artist
-      subject.instance_variable_set :@title, title_to_correct
+      subject.instance_variable_set :@title, title_before_corrections
 
       subject.send :correct_title_feat
 
@@ -20,9 +22,11 @@ describe MusicComparator::Corrector do
       expect(subject.instance_variable_get(:@title)).to eq(title)
     end
 
-    ['title (feat)', 'title feat', 'title - feat'].each do |pattern|
-      it "removes feat from artist '#{pattern}' to title" do
-        common_part pattern
+    %w(feat feat. Feat Feat. ft ft.).each do |feat_shortcut|
+      ['title (feat)', 'title feat', 'title - feat', 'title (feat) (remix)', 'title feat (remix)', 'title (feat - remix)'].each do |pattern|
+        it "moves feat with shortcut '#{feat_shortcut}' and pattern '#{pattern}' from artist to title" do
+          common_part pattern: pattern, feat_shortcut: feat_shortcut
+        end
       end
     end
 
