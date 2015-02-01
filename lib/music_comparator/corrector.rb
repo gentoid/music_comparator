@@ -18,7 +18,7 @@ module MusicComparator
             corrector.correct mp3.id3v2_tag.artist, mp3.id3v2_tag.title
 
             if corrector.changed?
-              puts corrector.changes.join("\n")
+              puts corrector.changes.join("\n") unless corrector.changes.empty?
               puts "#{mp3.id3v2_tag.artist.public_send(corrector.artist_changed? ? :red : :cyan)} - \
 #{mp3.id3v2_tag.title.public_send(corrector.title_changed? ? :red : :cyan)} > \
 #{corrector.artist.public_send(corrector.artist_changed? ? :green : :cyan)} - \
