@@ -19,7 +19,7 @@ module MusicComparator
 
             if corrector.changed?
               puts corrector.changes.join("\n") unless corrector.changes.empty?
-              puts "#{mp3.id3v2_tag.artist.public_send(corrector.artist_changed? ? :red : :cyan)} - \
+              # puts "#{mp3.id3v2_tag.artist.public_send(corrector.artist_changed? ? :red : :cyan)} - \
 #{mp3.id3v2_tag.title.public_send(corrector.title_changed? ? :red : :cyan)} > \
 #{corrector.artist.public_send(corrector.artist_changed? ? :green : :cyan)} - \
 #{corrector.title.public_send(corrector.title_changed? ? :green : :cyan)}"
@@ -105,19 +105,26 @@ module MusicComparator
 
     def correct_title_feat
       if (match = /(.+[(\[ ])(f(?:ea)?t(?:\.|uring)?) +(.+)/i.match(@title)) # catch all variants of 'featuring'
-        title = match[1].gsub(/(( +?-)? +| +\()$/, '')
+        before_feat = ''
+        title = match[1].gsub(/(( +?-)? +| +\()$/) { |m| before_feat = m; '' }
+        feat_shortcut = match[2]
         rest = match[3].strip
 
-        if (match = /^(.+[^\)]) +(?:- |\()(.+[^)])\)?$/.match(rest))
-          feat = match[1]
-          rest = match[2]
-        elsif (match = /^([^\(\)]+)\) *\(?([^)]*)/.match(rest))
-          feat = match[1]
-          rest = match[2]
+        if (m = /^(.+[^\)])( +(?:- |\())(.+[^)])(\)?)$/.match(rest))
+          feat = m[1]
+          rest = m[3]
+          rest_to_changes = "#{feat.red}#{m[2].magenta}#{rest.cyan}#{m[4].magenta}"
+        elsif (m = /^([^\(\)]+)(\) *\(?)([^)]*)(.*)$/.match(rest))
+          feat = m[1]
+          rest = m[3]
+          rest_to_changes = "#{feat.red}#{m[2].magenta}#{rest.cyan}#{m[4].magenta}"
         else
           feat = rest
           rest = ''
+          rest_to_changes = "#{feat.red}"
         end
+
+        changes = "#{@artist.cyan} - #{title.cyan}#{before_feat.magenta}#{feat_shortcut.red} #{rest_to_changes} > "
 
         if rest.length > 0
           title += " (#{rest})"
@@ -126,7 +133,8 @@ module MusicComparator
         @title = title
         @artist += " feat. #{feat}"
 
-        # puts "#{ mp3.id3v2_tag.title.cyan } => #{ title.green } #{ rest.cyan } #{'['.yellow.bold} feat. #{ feat.red.bold } #{']'.yellow.bold}"
+        changes += "#{@artist.green} - #{@title.green}"
+        @changes << changes
       end
     end
 

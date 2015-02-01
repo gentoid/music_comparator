@@ -17,9 +17,7 @@ describe MusicComparator::Corrector do
         title_correct_to += " (#{remix})"
       end
 
-      subject.instance_variable_set :@artist, artist
-      subject.instance_variable_set :@title, title_before_corrections
-
+      subject.send :init, artist, title_before_corrections
       subject.send :correct_title_feat
 
       if options[:check] == :artist
