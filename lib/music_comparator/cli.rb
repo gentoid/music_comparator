@@ -104,7 +104,7 @@ module MusicComparator
           condition.to_delete.each do |file_to_delete|
             result += file_to_delete.red
 
-            if moved_to = file_moved(file_to_delete, condition.path)
+            if (moved_to = file_moved(file_to_delete, condition.path))
               result += '  ' + '>>'.white.bold
               if moved_to[:exists]
                 result += "  #{ moved_to[:path].magenta } (file already exists)"

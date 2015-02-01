@@ -21,7 +21,7 @@ describe MusicComparator::Corrector do
       expect(subject.instance_variable_get(:@title)).to eq(title)
     end
 
-    %w(feat feat. Feat Feat. ft ft.).each do |feat_shortcut|
+    %w(featuring Featuring feat feat. Feat Feat. ft ft.).each do |feat_shortcut|
       ['title (feat)', 'title feat', 'title - feat', 'title (feat) (remix)', 'title feat (remix)', 'title (feat - remix)'].each do |pattern|
         it "moves feat with shortcut '#{feat_shortcut}' and pattern '#{pattern}' from artist to title" do
           common_part pattern: pattern, feat_shortcut: feat_shortcut
