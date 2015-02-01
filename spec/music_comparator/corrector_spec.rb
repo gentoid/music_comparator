@@ -5,7 +5,7 @@ describe MusicComparator::Corrector do
   describe '#correct_title_feat' do
 
     def common_part(options)
-      feat_artist = 'Featuring Artist'
+      feat_artist = 'Second Artist'
       remix  = 'Artist 2 Remix'
       title  = 'Title'
       artist = 'Artist'
